@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <meta name="description" content="vue如何实现拦截器首先在index.js里面需要拦截器的路由进行配置
+123456&amp;#123;  path: &amp;#39;&amp;#x2F;index&amp;#39;,  name: &amp;#39;index&amp;#39;,  component: index,  meta: &amp;#123;requireAuth: tr" />
+  
+
+  
+  
+  
+  
+  
+  
+  <title>Vue拦截器 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="vue如何实现拦截器首先在index.js里面需要拦截器的路由进行配置 123456&amp;#123;  path: &#39;&#x2F;index&#39;,  name: &#39;index&#39;,  component: index,  meta: &amp;#123;requireAuth: true&amp;#125; &#x2F;&#x2F; 配置此条，进入页面前判断是否需要登录&amp;#125; 配置完">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vue拦截器">
+<meta property="og:url" content="https://www.hyy.asia/2021/01/25/vue%E6%8B%A6%E6%88%AA%E5%99%A8/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="vue如何实现拦截器首先在index.js里面需要拦截器的路由进行配置 123456&amp;#123;  path: &#39;&#x2F;index&#39;,  name: &#39;index&#39;,  component: index,  meta: &amp;#123;requireAuth: true&amp;#125; &#x2F;&#x2F; 配置此条，进入页面前判断是否需要登录&amp;#125; 配置完">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-01-25T03:00:00.000Z">
+<meta property="article:modified_time" content="2021-01-25T06:21:33.895Z">
+<meta property="article:author" content="晏采子">
+<meta property="article:tag" content="vue拦截器">
+<meta name="twitter:card" content="summary">
+  
+  
+    <link rel="icon" href="/css/images/favicon.ico">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+
+  
+  <!-- baidu webmaster push -->
+  <script src='//push.zhanzhang.baidu.com/push.js'></script>
+  <script src="//cdn.jsdelivr.net/npm/leancloud-realtime@5.0.0-rc.5/dist/im-browser.min.js"></script>
+  <script>AV.initialize("pe5hqweqxUGT4sRu3a2Y3WOF-gzGzoHsz", "hf6J9MUnvJe01nyRclftG15v");</script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+<body class="home blog custom-background custom-font-enabled single-author">
+  <div id="page" class="hfeed site">
+      <header id="masthead" class="site-header" role="banner">
+    <hgroup>
+      <h1 class="site-title">
+        <a href="/" title="Hexo" rel="home">Hexo</a>
+      </h1>
+      
+        <h2 class="site-description hitokoto"></h2>
+        <script type="text/javascript" src="https://v1.hitokoto.cn/?encode=js"></script>
+      
+    </hgroup>
+
+    <nav id="site-navigation" class="main-navigation" role="navigation">
+            <button class="menu-toggle">菜单</button>
+            <a class="assistive-text" href="/#content" title="跳至内容">跳至内容</a><!--TODO-->
+            <div class="menu-main-container">
+                <ul id="menu-main" class="nav-menu">
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/">Home</a></li>
+                
+                    <li class="menu-item menu-item-type-post_type menu-item-object-page"><a href="/archives">Archives</a></li>
+                
+                </ul>
+            </div>
+    </nav>
+</header>
+
+      <div id="main" class="wrapper">
+        <div id="primary" class="site-content"><div id="content" role="main"><article id="post-vue拦截器" class="post-vue拦截器 post type-post status-publish format-standard hentry">
+    <!---->
+
+      <header class="entry-header">
+        
+        
+  
+    <h1 class="entry-title article-title">
+      Vue拦截器
+    </h1>
+  
+
+        
+        <div class="comments-link">
+            
+            <a href="javascript:void(0);" data-url="https://www.hyy.asia/2021/01/25/vue%E6%8B%A6%E6%88%AA%E5%99%A8/" data-id="ckkcg1ibx0004lo9t8hku3e0b" class="leave-reply bdsharebuttonbox" data-cmd="more">Share</a>
+        </div><!-- .comments-link -->
+      </header><!-- .entry-header -->
+
+    <div class="entry-content">
+      
+        <h1 id="vue如何实现拦截器"><a href="#vue如何实现拦截器" class="headerlink" title="vue如何实现拦截器"></a>vue如何实现拦截器</h1><p>首先在index.js里面需要拦截器的路由进行配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  path: &#39;&#x2F;index&#39;,</span><br><span class="line">  name: &#39;index&#39;,</span><br><span class="line">  component: index,</span><br><span class="line">  meta: &#123;requireAuth: true&#125; &#x2F;&#x2F; 配置此条，进入页面前判断是否需要登录</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>配置完路由，在main.js添加，用vue-router提供的钩子函数beforeEach()对路由进行判断。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">router.beforeEach((to, from, next) &#x3D;&gt; &#123;</span><br><span class="line">  console.log(to);</span><br><span class="line">  console.log(from);</span><br><span class="line">  if (to.meta.requireAuth) &#123; &#x2F;&#x2F; 判断该路由是否需要登录权限</span><br><span class="line">    if(sessionStorage.getItem(&#39;token&#39;))&#123; &#x2F;&#x2F;判断本地是否存在token</span><br><span class="line">      next();</span><br><span class="line">    &#125;else &#123;</span><br><span class="line">　　　　　　next(&#123;</span><br><span class="line">　　　　　　　　path: &#39;login&#39;,</span><br><span class="line">　　　　　　　　query: &#123;redirect: to.fullPath &#125; &#x2F;&#x2F; 将跳转的路由path作为参数，登录成功在跳转到该路由</span><br><span class="line">　　　　　　&#125;)</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  else &#123;</span><br><span class="line">    next();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+      
+    </div><!-- .entry-content -->
+
+    <footer class="entry-meta">
+    
+
+<a href="/2021/01/25/vue%E6%8B%A6%E6%88%AA%E5%99%A8/">
+    <time datetime="2021-01-25T03:00:00.000Z" class="entry-date">
+        2021-01-25
+    </time>
+</a>
+    
+  <span class="article-delim">&#8226;</span>
+  <div class="article-category">
+  <a class="article-category-link" href="/categories/Alipay/">Alipay</a>
+  </div>
+
+    
+  <span class="article-delim">&#8226;</span>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/vue%E6%8B%A6%E6%88%AA%E5%99%A8/" rel="tag">vue拦截器</a></li></ul>
+
+    </footer>
+</article>
+
+
+    
+<nav class="nav-single">
+    <h3 class="assistive-text">文章导航</h3>
+    
+    
+        <span class="nav-next"><a href="/2021/01/21/django%E5%AE%9E%E7%8E%B0%E4%B8%89%E6%96%B9%E7%99%BB%E9%99%86/" rel="next">三方登陆 <span class="meta-nav">→</span></a></span>
+    
+</nav><!-- .nav-single -->
+
+
+
+
+
+
+
+</div></div>
+        <div id="secondary" class="widget-area" role="complementary">
+  
+    <aside id="search" class="widget widget_search"><form role="search" method="get" accept-charset="utf-8" id="searchform" class="searchform" action="//google.com/search">
+    <div>
+        <input type="text" value="" name="s" id="s" />
+        <input type="submit" id="searchsubmit" value="搜索" />
+    </div>
+</form></aside>
+  
+    
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-content">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Alipay/">Alipay</a><span class="category-list-count">3</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget-content">
+      <ul>
+        
+          <li>
+            <a href="/2021/01/25/vue%E6%8B%A6%E6%88%AA%E5%99%A8/">Vue拦截器</a>
+          </li>
+        
+          <li>
+            <a href="/2021/01/21/django%E5%AE%9E%E7%8E%B0%E4%B8%89%E6%96%B9%E7%99%BB%E9%99%86/">三方登陆</a>
+          </li>
+        
+          <li>
+            <a href="/1937/03/27/django%E5%AE%8C%E6%88%90%E4%B8%89%E6%96%B9%E6%94%AF%E4%BB%98/">支付宝</a>
+          </li>
+        
+      </ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-content">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/alipay/" rel="tag">alipay</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/alipay2/" rel="tag">alipay2</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vue%E6%8B%A6%E6%88%AA%E5%99%A8/" rel="tag">vue拦截器</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </aside>
+
+  
+    
+  <aside class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-content tagcloud">
+      <a href="/tags/alipay/" style="font-size: 10px;">alipay</a> <a href="/tags/alipay2/" style="font-size: 10px;">alipay2</a> <a href="/tags/vue%E6%8B%A6%E6%88%AA%E5%99%A8/" style="font-size: 10px;">vue拦截器</a>
+    </div>
+  </aside>
+
+  
+    
+    <div class="widget-wrap">
+      <h3 class="widget-title">浏览数目</h3>
+      <div class="widget">
+        <ul class="popularlist">
+        </ul>
+      </div>
+    </div>
+  
+  
+</div>
+      </div>
+      <footer id="colophon" role="contentinfo">
+    <p>&copy; 2021 晏采子
+    All rights reserved.</p>
+    <p>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></p>
+</footer>
+
+
+    <script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"1","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"16"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/js/share.js'];</script>
+
+<script src="/js/jquery-3.3.1.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+<script src="/js/navigation.js"></script>
+
+<div id="bg"></div>
+
+<!--page counter part-->
+<script>
+  function addCount (Counter) {
+          url=$('.article-date').attr('href').trim();
+          title = $('.article-title').text().trim();
+          var query=new AV.Query(Counter);
+          //use url as unique idnetfication
+          query.equalTo("url",url);
+          query.find({
+              success: function(results){
+                  if(results.length>0)
+                  {
+                      var counter=results[0];
+                      counter.fetchWhenSave(true); //get recent result
+                      counter.increment("time");
+                      counter.save();
+                  }
+                  else
+                  {
+                      var newcounter=new Counter();
+                      newcounter.set("title",title);
+                      newcounter.set("url",url);
+                      newcounter.set("time",1);
+                      newcounter.save(null,{
+                          success: function(newcounter){
+                          //alert('New object created');
+                          },
+                          error: function(newcounter,error){
+                          alert('Failed to create');
+                          }
+                          });
+                  }
+              },
+              error: function(error){
+                  //find null is not a error
+                  alert('Error:'+error.code+" "+error.message);
+              }
+          });
+  }
+  $(function(){
+          var Counter=AV.Object.extend("Counter");
+          //only increse visit counting when intering a page
+          if ($('.article-title').length == 1)
+             addCount(Counter);
+          var query=new AV.Query(Counter);
+          query.descending("time");
+          // the sum of popular posts
+          query.limit(10); 
+          query.find({
+              success: function(results){
+                      for(var i=0;i<results.length;i++)    
+                      {
+                          var counter=results[i];
+                          title=counter.get("title");
+                          url=counter.get("url");
+                          time=counter.get("time");
+                          // add to the popularlist widget
+                          showcontent=title+" ("+time+")";
+                          //notice the "" in href
+                          $('.popularlist').append('<li><a href="'+url+'">'+showcontent+'</a></li>');
+                      }
+                  },
+              error: function(error){
+                  alert("Error:"+error.code+" "+error.message);
+              }
+              }
+          )
+          });
+  </script>
+  </div>
+</body>
+</html>
